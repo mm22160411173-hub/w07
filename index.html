@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物年齡換算器 | 寵物美容溫馨小工具</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            50: '#fffbf5',
+                            100: '#fef3e2',
+                            200: '#fce4c4',
+                            300: '#f9cb96',
+                            400: '#f5a462',
+                            500: '#ef7e32',
+                            600: '#e05d1b',
+                            700: '#ba4316',
+                            800: '#943719',
+                            900: '#773017',
+                        },
+                        cream: {
+                            50: '#faf7f2',
+                            100: '#f3ece1',
+                            200: '#e5d7c3',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fef3e2;
+            background-image: radial-gradient(#f9cb96 0.75px, transparent 0.75px);
+            background-size: 16px 16px;
+        }
+        .card-shadow {
+            box-shadow: 0 20px 25px -5px rgba(239, 126, 50, 0.1), 0 8px 10px -6px rgba(239, 126, 50, 0.05);
+        }
+        .animate-bounce-gentle {
+            animation: bounceGentle 2s infinite;
+        }
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800 antialiased p-4 sm:p-6 md:p-8">
+
+    <!-- 主要容器 -->
+    <div class="max-w-xl mx-auto w-full my-auto">
+        <!-- 頂部工作室招牌感 Header -->
+        <header class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-warm-500 text-white shadow-lg mb-3 animate-bounce-gentle">
+                <i class="fa-solid fa-paw text-3xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-black text-warm-900 tracking-tight">寵物年齡換算器</h1>
+            <p class="text-warm-700 text-sm sm:text-base mt-2 font-medium">了解毛孩的人類年齡，給牠最適切的愛與美容照顧 🐾</p>
+        </header>
+
+        <!-- 主卡片區域 -->
+        <main class="bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 card-shadow border border-warm-200 transition-all duration-300">
+            
+            <!-- 寵物種類切換分頁 -->
+            <div class="flex rounded-2xl bg-cream-100 p-1.5 mb-6">
+                <button id="btn-dog" onclick="setPetType('dog')" class="flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 bg-warm-500 text-white shadow-md">
+                    <i class="fa-solid fa-dog"></i> 狗狗 (Dog)
+                </button>
+                <button id="btn-cat" onclick="setPetType('cat')" class="flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 text-warm-800 hover:text-warm-600">
+                    <i class="fa-solid fa-cat"></i> 貓咪 (Cat)
+                </button>
+            </div>
+
+            <!-- 輸入表單 -->
+            <form id="ageForm" onsubmit="calculateAge(event)" class="space-y-5">
+                
+                <!-- 狗體型選擇 (僅狗狗顯示) -->
+                <div id="size-group">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">
+                        1. 請選擇毛孩體型：
+                    </label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="dogSize" value="small" checked class="peer hidden">
+                            <div class="p-3 text-center rounded-xl border-2 border-gray-100 bg-warm-50 text-xs sm:text-sm font-semibold text-gray-600 peer-checked:border-warm-500 peer-checked:bg-warm-100 peer-checked:text-warm-900 transition-all">
+                                小型犬<br><span class="text-[11px] font-normal text-gray-500">10kg 以下</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="dogSize" value="medium" class="peer hidden">
+                            <div class="p-3 text-center rounded-xl border-2 border-gray-100 bg-warm-50 text-xs sm:text-sm font-semibold text-gray-600 peer-checked:border-warm-500 peer-checked:bg-warm-100 peer-checked:text-warm-900 transition-all">
+                                中型犬<br><span class="text-[11px] font-normal text-gray-500">10-25kg</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="dogSize" value="large" class="peer hidden">
+                            <div class="p-3 text-center rounded-xl border-2 border-gray-100 bg-warm-50 text-xs sm:text-sm font-semibold text-gray-600 peer-checked:border-warm-500 peer-checked:bg-warm-100 peer-checked:text-warm-900 transition-all">
+                                大型犬<br><span class="text-[11px] font-normal text-gray-500">25-40kg</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="dogSize" value="giant" class="peer hidden">
+                            <div class="p-3 text-center rounded-xl border-2 border-gray-100 bg-warm-50 text-xs sm:text-sm font-semibold text-gray-600 peer-checked:border-warm-500 peer-checked:bg-warm-100 peer-checked:text-warm-900 transition-all">
+                                巨型犬<br><span class="text-[11px] font-normal text-gray-500">40kg 以上</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 歲數輸入 -->
+                <div>
+                    <label for="actualAge" class="block text-sm font-bold text-gray-700 mb-2">
+                        <span id="step-num">2</span>. 實際年齡：
+                    </label>
+                    <div class="relative rounded-2xl shadow-sm">
+                        <input type="number" id="actualAge" min="0.1" max="30" step="0.5" required placeholder="例如: 3.5"
+                            class="w-full px-4 py-3.5 pl-4 pr-16 border-2 border-warm-200 rounded-2xl text-lg font-bold text-gray-800 placeholder-gray-400 focus:outline-none focus:border-warm-500 focus:ring-2 focus:ring-warm-200 transition-all">
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-500 font-bold">
+                            歲
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1.5 ml-1">💡 支援小數點（如：半歲請填 0.5）</p>
+                </div>
+
+                <!-- 計算按鈕 -->
+                <button type="submit" 
+                    class="w-full py-4 bg-gradient-to-r from-warm-500 to-warm-600 hover:from-warm-600 hover:to-warm-700 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-warm-500/30 transform active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> 開始換算人類年齡
+                </button>
+            </form>
+
+            <!-- 計算結果區域 (預設隱藏) -->
+            <div id="resultArea" class="hidden mt-8 pt-6 border-t-2 border-dashed border-warm-200 transition-all duration-500">
+                <div class="text-center">
+                    <span id="stageBadge" class="inline-block px-3 py-1 bg-warm-100 text-warm-800 rounded-full text-xs font-bold mb-2">
+                        青年期
+                    </span>
+                    <h3 class="text-sm font-semibold text-gray-500">相當於人類年齡</h3>
+                    <div class="my-2 flex items-baseline justify-center gap-1 text-warm-600">
+                        <span id="humanAgeResult" class="text-5xl font-black tracking-tight">28</span>
+                        <span class="text-xl font-bold">歲</span>
+                    </div>
+                </div>
+
+                <!-- 階段評估與美容衛教建議卡片 -->
+                <div class="mt-6 bg-warm-50 rounded-2xl p-4 border border-warm-200 space-y-3">
+                    <div class="flex items-start gap-3">
+                        <div class="p-2 bg-warm-500 text-white rounded-xl text-lg mt-0.5">
+                            <i id="stageIcon" class="fa-solid fa-heart"></i>
+                        </div>
+                        <div>
+                            <h4 id="stageTitle" class="font-bold text-warm-900 text-sm sm:text-base">黃金壯年期</h4>
+                            <p id="stageDesc" class="text-xs sm:text-sm text-gray-600 mt-0.5 leading-relaxed">
+                                毛孩體能與心智皆處於最佳狀態！
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-3 text-xs sm:text-sm text-gray-700 border border-warm-100">
+                        <span class="font-bold text-warm-600 block mb-1">✂️ 寵物美容與護理建議：</span>
+                        <p id="groomingAdvice" class="leading-relaxed">
+                            定期洗澡保持皮毛健康，建議每 2-3 週進行基礎大修或造型梳理，並注意潔牙保健。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 重新計算按鈕 -->
+                <button onclick="resetCalculator()" class="w-full mt-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-bold transition-all">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> 重新試算其他毛孩
+                </button>
+            </div>
+
+        </main>
+
+        <!-- 頁尾美容工作室貼心宣告 -->
+        <footer class="mt-8 text-center text-xs text-warm-700/80 space-y-1">
+            <p class="font-medium">✨ 溫馨提醒：本換算參考權威獸醫學對不同體型毛孩老化的統計數據，個體差異請諮詢專業獸醫師。</p>
+            <p>© 寵物美容工作室 專業服務 | 關心毛孩健康每一天</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript 換算邏輯 -->
+    <script>
+        let currentPetType = 'dog';
+
+        function setPetType(type) {
+            currentPetType = type;
+            const btnDog = document.getElementById('btn-dog');
+            const btnCat = document.getElementById('btn-cat');
+            const sizeGroup = document.getElementById('size-group');
+            const stepNum = document.getElementById('step-num');
+
+            if (type === 'dog') {
+                btnDog.className = 'flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 bg-warm-500 text-white shadow-md';
+                btnCat.className = 'flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 text-warm-800 hover:text-warm-600';
+                sizeGroup.classList.remove('hidden');
+                stepNum.textContent = '2';
+            } else {
+                btnCat.className = 'flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 bg-warm-500 text-white shadow-md';
+                btnDog.className = 'flex-1 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 text-warm-800 hover:text-warm-600';
+                sizeGroup.classList.add('hidden');
+                stepNum.textContent = '1';
+            }
+            
+            // 隱藏結果區
+            document.getElementById('resultArea').classList.add('hidden');
+        }
+
+        function calculateAge(event) {
+            event.preventDefault();
+            
+            const age = parseFloat(document.getElementById('actualAge').value);
+            if (isNaN(age) || age <= 0) return;
+
+            let humanAge = 0;
+            
+            if (currentPetType === 'cat') {
+                // 貓咪換算邏輯
+                if (age <= 1) {
+                    humanAge = age * 15;
+                } else if (age <= 2) {
+                    humanAge = 15 + (age - 1) * 9; // 2歲相當於 24 歲
+                } else {
+                    humanAge = 24 + (age - 2) * 4; // 之後每年加 4 歲
+                }
+            } else {
+                // 狗狗換算邏輯 (依體型)
+                const size = document.querySelector('input[name="dogSize"]:checked').value;
+                
+                if (age <= 1) {
+                    humanAge = age * 15;
+                } else if (age <= 2) {
+                    humanAge = 15 + (age - 1) * 9; // 2歲皆約為 24 歲
+                } else {
+                    // 2歲以後根據體型有不同老化速度
+                    let multiplier = 4;
+                    if (size === 'small') multiplier = 4;
+                    else if (size === 'medium') multiplier = 5;
+                    else if (size === 'large') multiplier = 6;
+                    else if (size === 'giant') multiplier = 7;
+
+                    humanAge = 24 + (age - 2) * multiplier;
+                }
+            }
+
+            humanAge = Math.round(humanAge);
+
+            // 展示結果與評估建議
+            displayResult(age, humanAge);
+        }
+
+        function displayResult(actualAge, humanAge) {
+            const resultArea = document.getElementById('resultArea');
+            const humanAgeResult = document.getElementById('humanAgeResult');
+            const stageBadge = document.getElementById('stageBadge');
+            const stageIcon = document.getElementById('stageIcon');
+            const stageTitle = document.getElementById('stageTitle');
+            const stageDesc = document.getElementById('stageDesc');
+            const groomingAdvice = document.getElementById('groomingAdvice');
+
+            humanAgeResult.textContent = humanAge;
+
+            // 階段判定與文字更新
+            if (humanAge < 15) {
+                stageBadge.textContent = '幼年幼童期 👶';
+                stageIcon.className = 'fa-solid fa-baby';
+                stageTitle.textContent = '好奇心旺盛的幼兒期';
+                stageDesc.textContent = '這個階段正處於學習與探索世界的大腦黃金發育期！';
+                groomingAdvice.textContent = '建議早期進行「減敏美容訓練」，讓毛孩習慣洗澡、吹風、剪指甲與觸碰腳掌，培養良好的美容習慣。';
+            } else if (humanAge < 25) {
+                stageBadge.textContent = '青春少年期 🎒';
+                stageIcon.className = 'fa-solid fa-bolt';
+                stageTitle.textContent = '活力充沛的青少年期';
+                stageDesc.textContent = '身體快速成長，精力非常旺盛，需要足夠的運動與社交。';
+                groomingAdvice.textContent = '毛髮生長迅速，建議每 3-4 週進行洗澡與局部修剪，預防指甲過長及耳朵發炎。';
+            } else if (humanAge < 50) {
+                stageBadge.textContent = '黃金壯年期 💪';
+                stageIcon.className = 'fa-solid fa-shield-heart';
+                stageTitle.textContent = '成熟穩定的壯年期';
+                stageDesc.textContent = '體能與心智皆處於最佳狀態，是陪你一起探索世界的最佳夥伴。';
+                groomingAdvice.textContent = '定期洗澡保持皮毛健康，建議定期做深層護毛修護與口腔衛生維護，維持最佳毛色與光澤。';
+            } else if (humanAge < 65) {
+                stageBadge.textContent = '熟齡成熟期 👓';
+                stageIcon.className = 'fa-solid fa-glasses';
+                stageTitle.textContent = '需要細心呵護的熟齡期';
+                stageDesc.textContent = '體力開始漸漸放緩，新陳代謝變慢，需要更多關懷與體貼。';
+                groomingAdvice.textContent = '美容時動作需輕柔，特別注意關節與皮膚狀況。建議使用溫和保濕洗劑，並定期檢查皮膚是否有腫塊。';
+            } else {
+                stageBadge.textContent = '溫馨高齡期 👑';
+                stageIcon.className = 'fa-solid fa-crown';
+                stageTitle.textContent = '值得萬分尊敬的老寶貝';
+                stageDesc.textContent = '行動較為緩慢，視力或聽力可能減退，最需要溫暖的陪伴與照顧。';
+                groomingAdvice.textContent = '美容以「舒服、乾淨、安全」為第一優先，簡化剪毛造型時間，選用紓壓護膚洗劑，降低高齡毛孩的緊張感。';
+            }
+
+            resultArea.classList.remove('hidden');
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function resetCalculator() {
+            document.getElementById('actualAge').value = '';
+            document.getElementById('resultArea').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
